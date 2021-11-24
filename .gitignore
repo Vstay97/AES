@@ -9,7 +9,6 @@ gen
 roberta
 ernie
 Pre-training
-data
 !/data/model_my.model
 !/data/model_my.model.trainables.syn1neg.npy
 !/data/model_my.model.wv.vectors.npy
