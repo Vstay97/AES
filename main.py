@@ -18,7 +18,7 @@ from Evaluate.evaluator import Evaluator
 # print(device_lib.list_local_devices())
 
 os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
-os.environ["CUDA_VISIBLE_DEVICES"] = "1"  # 使用第一, 三块GPU
+os.environ["CUDA_VISIBLE_DEVICES"] = "3"  # 使用第一, 三块GPU
 # 最好的验证性能
 best_result_fold = []
 # 平均性能
@@ -55,17 +55,17 @@ for i in datas:
         args.dev_path = 'data/fold_' + str(i) + '/dev.tsv'
         args.test_path = 'data/fold_' + str(i) + '/test.tsv'
 
-        # 3090专用
-        if prompt == 8:
-            args.batch_size = 8
-        elif prompt == 3:
-            args.batch_size = 16
-        elif prompt == 4:
-            args.batch_size = 16
-        elif prompt == 5:
-            args.batch_size = 16
-        else:
-            args.batch_size = 8
+        # # 3090专用
+        # if prompt == 8:
+        #     args.batch_size = 8
+        # elif prompt == 3:
+        #     args.batch_size = 16
+        # elif prompt == 4:
+        #     args.batch_size = 16
+        # elif prompt == 5:
+        #     args.batch_size = 16
+        # else:
+        #     args.batch_size = 8
 
 
 

@@ -5,13 +5,13 @@ from transformers import BertTokenizer,AutoTokenizer
 class BertPreSetting:
     def __init__(self, args, overal_maxlen):
         if args.model_type == r'ernie':
-            self.path = './ernie'
+            self.path = './Pre-training/ernie'
             self.tokenizer = AutoTokenizer.from_pretrained(self.path)
         if args.model_type == r'roberta':
-            self.path = './roberta'
+            self.path = './Pre-training/roberta'
             self.tokenizer = AutoTokenizer.from_pretrained(self.path)
         else:
-            self.path = r'./Pre-training'
+            self.path = r'./Pre-training/BERT_base'
             self.tokenizer = BertTokenizer.from_pretrained(self.path)
         self.args = args
         self.max_length = overal_maxlen

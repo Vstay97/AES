@@ -52,7 +52,7 @@ class Models:
                 , LSTM, LeakyReLU, concatenate, Flatten
 
             from transformers import BertTokenizer, TFBertModel
-            path = 'Pre-training'
+            path = 'Pre-training/BERT_base'
             bert_model = TFBertModel.from_pretrained(path)
 
             # 第一个输入
@@ -99,7 +99,7 @@ class Models:
                 , LSTM, LeakyReLU, concatenate, Flatten
 
             from transformers import BertTokenizer, TFBertModel
-            path = 'Pre-training'
+            path = 'Pre-training/BERT_base'
             bert_model = TFBertModel.from_pretrained(path)
 
             # 第一个输入
@@ -161,7 +161,7 @@ class Models:
                 , LSTM, LeakyReLU, concatenate, Flatten
 
             from transformers import BertTokenizer, TFBertModel
-            path = 'Pre-training'
+            path = 'Pre-training/BERT_base'
             bert_model = TFBertModel.from_pretrained(path)
 
             # 第一个输入
@@ -214,7 +214,7 @@ class Models:
             import transformers
 
             from transformers import BertTokenizer, TFBertModel
-            path = 'Pre-training'
+            path = 'Pre-training/BERT_base'
             bert_model = TFBertModel.from_pretrained(path)
             ### 冻结参数
             # 全部冻结参数
@@ -286,7 +286,7 @@ class Models:
             import transformers
 
             from transformers import BertTokenizer, TFBertModel
-            path = 'Pre-training'
+            path = 'Pre-training/BERT_base'
             bert_model = TFBertModel.from_pretrained(path)
             ### 冻结参数
             # 全部冻结参数
@@ -366,7 +366,7 @@ class Models:
             import transformers
 
             from transformers import BertTokenizer, TFBertModel
-            path = 'Pre-training'
+            path = 'Pre-training/BERT_base'
             bert_model = TFBertModel.from_pretrained(path)
             ### 冻结参数
             # 全部冻结参数
@@ -486,7 +486,7 @@ class Models:
             import transformers
 
             from transformers import BertTokenizer, TFBertModel
-            path = 'Pre-training'
+            path = 'Pre-training/BERT_base'
             bert_model = TFBertModel.from_pretrained(path)
             ### 冻结参数
             # 全部冻结参数
