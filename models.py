@@ -426,15 +426,13 @@ class Models:
             # out.shape == (None,600,1368)
             x_feature = concatenate([x1, x2], axis=-1)
             # 把Bert的输出作为初始化门偏置
-            matrix = Dense(1068,activation='sigmoid')(emb_out1)
+            matrix = Dense(1068, activation='sigmoid')(emb_out1)
             out = x_feature * matrix
 
             max = GlobalMaxPooling1D()(out)
             avg = GlobalAveragePooling1D()(out)
 
-            x = concatenate([max,avg],axis=-1)
-
-
+            x = concatenate([max, avg], axis=-1)
 
             # # 分别双池化，然后门控，然后全连接
             # max_x1 = GlobalMaxPooling1D()(x1)
@@ -505,7 +503,7 @@ class Models:
                 if isinstance(layer, transformers.models.bert.modeling_tf_bert.TFBertMainLayer):
                     for idx, layer in enumerate(layer.encoder.layer):
                         # if idx in [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]:
-                        if idx in [0, 1, 2, 3]:
+                        if idx in [0, 1, 2, 3, 4, 5, 6, 7]:
                             layer.trainable = False
             bert_model.summary()
 
@@ -516,7 +514,6 @@ class Models:
 
             # trm_out.shape == (None,600,300)
             x1 = MultiHeadAttention(3, 100)(emb_out1)
-
 
             # 第二个输入
             # shape == (None,600)
@@ -533,14 +530,13 @@ class Models:
             # out.shape == (None,600,1368)
             x_feature = concatenate([x1, x2], axis=-1)
             # 把Bert的输出作为初始化门偏置
-            matrix = Dense(1068,activation='sigmoid')(emb_out1)
+            matrix = Dense(1068, activation='sigmoid')(emb_out1)
             out = x_feature * matrix
 
             max = GlobalMaxPooling1D()(out)
             avg = GlobalAveragePooling1D()(out)
 
-            x = concatenate([max,avg],axis=-1)
-
+            x = concatenate([max, avg], axis=-1)
 
             x = Dropout(0.1)(x)
             x = Dense(100, activation='swish')(x)
