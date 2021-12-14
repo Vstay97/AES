@@ -18,7 +18,7 @@ from Evaluate.evaluator import Evaluator
 # print(device_lib.list_local_devices())
 
 os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
-os.environ["CUDA_VISIBLE_DEVICES"] = "1"  # 使用第一, 三块GPU
+os.environ["CUDA_VISIBLE_DEVICES"] = "0"  # 使用第一, 三块GPU
 # 最好的验证性能
 best_result_fold = []
 # 平均性能
