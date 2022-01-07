@@ -150,7 +150,7 @@ for i in datas:
 
         for epoch in range(args.epochs):
             # Training
-            logger.info('Prompt_id: %d, Epoch %d,' % (j, epoch ))
+            logger.info('Prompt_id: %d, Epoch %d,' % (j, epoch))
             logger.info('Training:')
             t0 = time()
             train_history = model.fit([train_x, inputs_train_ids, inputs_train_mask, inputs_train_tokentype], train_y,
