@@ -36,7 +36,9 @@ class Evaluator:
         self.PRS_best = float("-inf")
         self.SPR_best = float("-inf")
         self.Tau_best = float("-inf")
-        logger.addHandler(logging.StreamHandler())
+        # 这里进行判断，如果logger.handlers列表为空，则添加，否则，直接去写日志
+        if not logger.handlers:
+            logger.addHandler(logging.StreamHandler())
 
 
     def dump_ref_scores(self):
