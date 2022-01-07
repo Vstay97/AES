@@ -67,9 +67,6 @@ for i in datas:
         else:
             args.batch_size = 8
 
-
-
-
         # 设定numpy随机种子
         if args.seed > 0:
             random.seed(args.seed)  # 为python设置随机种子
@@ -142,7 +139,6 @@ for i in datas:
         # model.compile(optimizer='adam', loss=loss, metrics=metric)
         model.compile(optimizer='Nadam', loss=loss, metrics=metric)
 
-
         # 评价指标
         evl = Evaluator(get_Data, args, out_dir, dev_x, inputs_dev_ids, inputs_dev_mask, inputs_dev_tokentype, test_x,
                         inputs_test_ids, inputs_test_mask, inputs_test_tokentype, dev_y, test_y, dev_y_org, test_y_org)
@@ -154,6 +150,8 @@ for i in datas:
 
         for epoch in range(args.epochs):
             # Training
+            logger.info('Prompt_id: %d, Epoch %d,' % (j, epoch ))
+            logger.info('Training:')
             t0 = time()
             train_history = model.fit([train_x, inputs_train_ids, inputs_train_mask, inputs_train_tokentype], train_y,
                                       batch_size=args.batch_size, epochs=1, verbose=1)
@@ -168,8 +166,7 @@ for i in datas:
             total_time = time() - t1
 
             # Print information
-            logger.info(
-                'Epoch %d, train: %is, evaluation: %is, total_time: %is, prompt_id: %i' % (epoch, tr_time, evl_time, total_time, j))
+            logger.info('train: %is, evaluation: %is, total_time: %is' % (tr_time, evl_time, total_time))
             train_loss = train_history.history['loss'][0]
             train_metric = train_history.history[metric][0]
             logger.info('[Train] loss: %.4f, metric: %.4f' % (train_loss, train_metric))
@@ -194,7 +191,7 @@ import time
 print(np.mean(best_result_fold, axis=0))
 with open("实验数据.txt", "a+", encoding="utf-8") as f:
     f.seek(0)
-    f.write(str(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())) + '：'+args.model_type+'，'+args.explain+'\n')
+    f.write(str(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())) + '：' + args.model_type + '，' + args.explain + '\n')
     f.write(str(best_result_fold))
     f.write("\n")
     f.write('均值：')

@@ -69,8 +69,10 @@ class Evaluator:
         return dev_qwk, test_qwk, dev_lwk, test_lwk
 
     def evaluate(self, model, epoch, print_info=False):
-        self.dev_loss, self.dev_metric = model.evaluate([self.dev_x, self.inputs_dev_ids, self.inputs_dev_mask, self.inputs_dev_tokentype], self.dev_y, batch_size=self.batch_size, verbose=0)
-        self.test_loss, self.test_metric = model.evaluate([self.test_x, self.inputs_test_ids, self.inputs_test_mask, self.inputs_test_tokentype], self.test_y, batch_size=self.batch_size, verbose=0)
+        logger.info('Evaluating -> dev:')
+        self.dev_loss, self.dev_metric = model.evaluate([self.dev_x, self.inputs_dev_ids, self.inputs_dev_mask, self.inputs_dev_tokentype], self.dev_y, batch_size=self.batch_size, verbose=1)
+        logger.info('Evaluating -> test:')
+        self.test_loss, self.test_metric = model.evaluate([self.test_x, self.inputs_test_ids, self.inputs_test_mask, self.inputs_test_tokentype], self.test_y, batch_size=self.batch_size, verbose=1)
         self.dev_pred = model.predict([self.dev_x, self.inputs_dev_ids, self.inputs_dev_mask, self.inputs_dev_tokentype], batch_size=self.batch_size).squeeze()
         self.test_pred = model.predict([self.test_x, self.inputs_test_ids, self.inputs_test_mask, self.inputs_test_tokentype], batch_size=self.batch_size).squeeze()
 
