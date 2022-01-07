@@ -169,7 +169,7 @@ for i in datas:
 
             # Print information
             logger.info(
-                'Epoch %d, train: %is, evaluation: %is, total_time: %is' % (epoch, tr_time, evl_time, total_time))
+                'Epoch %d, train: %is, evaluation: %is, total_time: %is, prompt_id: %i' % (epoch, tr_time, evl_time, total_time, j))
             train_loss = train_history.history['loss'][0]
             train_metric = train_history.history[metric][0]
             logger.info('[Train] loss: %.4f, metric: %.4f' % (train_loss, train_metric))
