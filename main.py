@@ -156,7 +156,7 @@ for i in datas:
             # Training
             t0 = time()
             train_history = model.fit([train_x, inputs_train_ids, inputs_train_mask, inputs_train_tokentype], train_y,
-                                      batch_size=args.batch_size, epochs=1, verbose=0)
+                                      batch_size=args.batch_size, epochs=1, verbose=1)
             tr_time = time() - t0
             total_train_time += tr_time
 

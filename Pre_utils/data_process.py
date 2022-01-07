@@ -59,7 +59,6 @@ class DatasetProcess:
     # 将分数转换为 [0 1] 的边界以进行训练和评估（损失计算）
     def get_model_friendly_scores(self,scores_array, prompt_id_array):
         arg_type = type(prompt_id_array)
-        print(arg_type)
         assert arg_type in {int, np.ndarray}
         if arg_type is int:
             low, high = self.asap_ranges[prompt_id_array]
