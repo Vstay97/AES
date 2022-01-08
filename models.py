@@ -536,7 +536,7 @@ class Models:
             max = GlobalMaxPooling1D()(out)
             avg = GlobalAveragePooling1D()(out)
 
-            x = max
+            x = avg
             # x = concatenate([max, avg], axis=-1)
 
             x = Dropout(0.1)(x)
