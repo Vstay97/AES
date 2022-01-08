@@ -493,19 +493,19 @@ class Models:
             # bert_model.summary()
 
             ######   冻结10层
-            # 冻结embeddings参数
-            # for layer in bert_model.layers[:]:
-            #     if isinstance(layer, transformers.models.bert.modeling_tf_bert.TFBertMainLayer):
-            #         layer.embeddings.trainable = False
-            # bert_model.summary()
-            # 冻结encoder部分参数
-            # for layer in bert_model.layers[:]:
-            #     if isinstance(layer, transformers.models.bert.modeling_tf_bert.TFBertMainLayer):
-            #         for idx, layer in enumerate(layer.encoder.layer):
-            #             # if idx in [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]:
-            #             if idx in [0, 1, 2, 3]:
-            #                 layer.trainable = False
-            # bert_model.summary()
+            # # 冻结embeddings参数
+            for layer in bert_model.layers[:]:
+                if isinstance(layer, transformers.models.bert.modeling_tf_bert.TFBertMainLayer):
+                    layer.embeddings.trainable = False
+            bert_model.summary()
+            ## # 冻结encoder部分参数
+            for layer in bert_model.layers[:]:
+                if isinstance(layer, transformers.models.bert.modeling_tf_bert.TFBertMainLayer):
+                    for idx, layer in enumerate(layer.encoder.layer):
+                        # if idx in [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]:
+                        if idx in [0, 1, 2, 3,4,5,6,7,8,9,10]:
+                            layer.trainable = False
+            bert_model.summary()
 
             # 第一个输入
             input1 = Input(shape=(overal_maxlen,), dtype='int32')
@@ -529,12 +529,12 @@ class Models:
 
             # out.shape == (None,600,1368)
             x_feature = concatenate([x1, x2], axis=-1)
-            # 把Bert的输出作为初始化门偏置
-            matrix = Dense(1068, activation='sigmoid')(emb_out1)
-            out = x_feature * matrix
+            # # 把Bert的输出作为初始化门偏置
+            # matrix = Dense(1068, activation='sigmoid')(emb_out1)
+            # out = x_feature * matrix
 
-            max = GlobalMaxPooling1D()(out)
-            avg = GlobalAveragePooling1D()(out)
+            max = GlobalMaxPooling1D()(x_feature)
+            avg = GlobalAveragePooling1D()(x_feature)
 
             x = concatenate([max, avg], axis=-1)
 

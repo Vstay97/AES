@@ -73,7 +73,7 @@ for i in datas:
             np.random.seed(args.seed)  # 为numpy设置随机种子
             tf.random.set_seed(args.seed)  # tf cpu fix seed
             # 使用GPU，需要pip install tensorflow-determinism
-            # os.environ['TF_DETERMINISTIC_OPS'] = '1'
+            os.environ['TF_DETERMINISTIC_OPS'] = '1'
 
         # 设定文本长度
         maxlen_array = [600, 600, 300, 300, 300, 400, 500, 800]
