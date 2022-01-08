@@ -494,10 +494,10 @@ class Models:
 
             ######   冻结10层
             # 冻结embeddings参数
-            for layer in bert_model.layers[:]:
-                if isinstance(layer, transformers.models.bert.modeling_tf_bert.TFBertMainLayer):
-                    layer.embeddings.trainable = False
-            bert_model.summary()
+            # for layer in bert_model.layers[:]:
+            #     if isinstance(layer, transformers.models.bert.modeling_tf_bert.TFBertMainLayer):
+            #         layer.embeddings.trainable = False
+            # bert_model.summary()
             # 冻结encoder部分参数
             # for layer in bert_model.layers[:]:
             #     if isinstance(layer, transformers.models.bert.modeling_tf_bert.TFBertMainLayer):
