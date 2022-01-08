@@ -533,10 +533,11 @@ class Models:
             matrix = Dense(1068, activation='sigmoid')(emb_out1)
             out = x_feature * matrix
 
-            max = GlobalMaxPooling1D()(out)
-            avg = GlobalAveragePooling1D()(out)
+            # max = GlobalMaxPooling1D()(out)
+            # avg = GlobalAveragePooling1D()(out)
 
-            x = avg
+            # 把out降维
+            x = tf.reduce_mean(out,axis=1)
             # x = concatenate([max, avg], axis=-1)
 
             x = Dropout(0.1)(x)
