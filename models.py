@@ -503,7 +503,7 @@ class Models:
                 if isinstance(layer, transformers.models.bert.modeling_tf_bert.TFBertMainLayer):
                     for idx, layer in enumerate(layer.encoder.layer):
                         # if idx in [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]:
-                        if idx in [0, 1, 2, 3,4,5,6,7,8,9,10]:
+                        if idx in [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]:
                             layer.trainable = False
             bert_model.summary()
 
@@ -514,6 +514,7 @@ class Models:
 
             # trm_out.shape == (None,600,300)
             x1 = MultiHeadAttention(3, 100)(emb_out1)
+            x1 = tf.reduce_mean(x1, axis=1)
 
             # 第二个输入
             # shape == (None,600)
@@ -523,23 +524,23 @@ class Models:
             dim_out2 = bert_model(
                 {"input_ids": input_ids, "token_type_ids": input_tokentype, "attention_mask": input_mask})
             # bert_last_hidden_output = dim_out2.last_hidden_state
-            bert_pooler_output = dim_out2.last_hidden_state
-            # x2.shape == (None,600,768)
+            bert_pooler_output = dim_out2.pooler_output
+            # x2.shape == (None,768)
             x2 = bert_pooler_output
 
             # out.shape == (None,600,1368)
             x_feature = concatenate([x1, x2], axis=-1)
             # 把Bert的输出作为初始化门偏置
-            matrix = Dense(1068, activation='sigmoid')(emb_out1)
+            matrix = Dense(1068, activation='sigmoid')(input1)
             out = x_feature * matrix
 
             # max = GlobalMaxPooling1D()(out)
             # avg = GlobalAveragePooling1D()(out)
 
             # 把out降维
-            x = tf.reduce_mean(out,axis=1)
+            # x = tf.reduce_minop(out,axis=1)
             # x = concatenate([max, avg], axis=-1)
-
+            x = out
             x = Dropout(0.1)(x)
             x = Dense(100, activation='swish')(x)
             x = Dense(100, activation='swish')(x)
