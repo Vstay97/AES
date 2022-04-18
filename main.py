@@ -55,17 +55,17 @@ for i in datas:
         args.dev_path = 'data/fold_' + str(i) + '/dev.tsv'
         args.test_path = 'data/fold_' + str(i) + '/test.tsv'
 
-        # 3090专用
-        if prompt == 8:
-            args.batch_size = 8
-        elif prompt == 3:
-            args.batch_size = 16
-        elif prompt == 4:
-            args.batch_size = 16
-        elif prompt == 5:
-            args.batch_size = 16
-        else:
-            args.batch_size = 8
+        # # 3090专用
+        # if prompt == 8:
+        #     args.batch_size = 8
+        # elif prompt == 3:
+        #     args.batch_size = 16
+        # elif prompt == 4:
+        #     args.batch_size = 16
+        # elif prompt == 5:
+        #     args.batch_size = 16
+        # else:
+        #     args.batch_size = 8
 
         # 设定numpy随机种子
         if args.seed > 0:
@@ -181,8 +181,11 @@ for i in datas:
         best_statistics = evl.get_best_statistics()
         best_result_data.append(best_statistics)
         logger.removeHandler(logging.StreamHandler)
+        # 保存该数据集的模型
+
 
     best_result_fold.append(best_result_data)
+
 
 mean_fold.append(np.mean(best_result_fold, axis=0))
 
