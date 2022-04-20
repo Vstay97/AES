@@ -18,7 +18,7 @@ from Evaluate.evaluator import Evaluator
 # print(device_lib.list_local_devices())
 
 os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
-os.environ["CUDA_VISIBLE_DEVICES"] = "0"  # 使用第一, 三块GPU
+os.environ["CUDA_VISIBLE_DEVICES"] = "0,1"  # 使用第一, 三块GPU
 # 最好的验证性能
 best_result_fold = []
 # 平均性能
@@ -55,6 +55,9 @@ for i in datas:
         args.dev_path = 'data/fold_' + str(i) + '/dev.tsv'
         args.test_path = 'data/fold_' + str(i) + '/test.tsv'
 
+
+        # 多GPU尝试
+        args.batch_size = 8
         # # 3090专用
         # if prompt == 8:
         #     args.batch_size = 8
@@ -134,10 +137,14 @@ for i in datas:
         # optimizer = models_config.get_optimizer(args)
         loss, metric = models_config.get_loss_metric(args)
 
-        model = creat_model.get_model(args, overal_maxlen, vocab)
-        # model.compile(optimizer='rmsprop', loss=loss, metrics=metric)
-        # model.compile(optimizer='adam', loss=loss, metrics=metric)
-        model.compile(optimizer='Nadam', loss=loss, metrics=metric)
+        # 多GPU训练
+        strategy = tf.distribute.MirroredStrategy()
+        with strategy.scope():
+            model = creat_model.get_model(args, overal_maxlen, vocab)
+            # model.compile(optimizer='rmsprop', loss=loss, metrics=metric)
+            # model.compile(optimizer='adam', loss=loss, metrics=metric)
+            # model.summary()
+            model.compile(optimizer='Nadam', loss=loss, metrics=metric)
 
         # 评价指标
         evl = Evaluator(get_Data, args, out_dir, dev_x, inputs_dev_ids, inputs_dev_mask, inputs_dev_tokentype, test_x,
