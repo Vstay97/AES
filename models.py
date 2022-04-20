@@ -42,7 +42,7 @@ class Models:
         self.num_outpus = len(self.initial_mean_value)
 
     def get_model(self, args, overal_maxlen, vocab):
-        if args.model_type == 'ChinaAI':
+        if args.model_type == 'ClassModule':
             '''
                 消融实验
             '''
@@ -90,7 +90,7 @@ class Models:
             matrix = Dense(1068, activation='sigmoid')(emb_out1)
             out = x_feature * matrix
 
-            out = x1
+
             max = GlobalMaxPooling1D()(out)
             avg = GlobalAveragePooling1D()(out)
 

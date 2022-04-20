@@ -21,7 +21,7 @@ class Config:
                             help="损失函数 (mse|mae) (default=mse)")
         parser.add_argument("-e", "--embdim", dest="emb_dim", type=int, metavar='<int>', default=300,
                             help="Embedding维度 (default=50)")
-        parser.add_argument("-b", "--batch_size", dest="batch_size", type=int, metavar='<int>', default=1,
+        parser.add_argument("-b", "--batch_size", dest="batch_size", type=int, metavar='<int>', default=2,
                             help="Batch size (default=32)")
         parser.add_argument("-lr", dest="learning_rate", type=float, metavar='<float>', default=1e-5,
                             help="学习率. 若禁用，给予一个负数 (default=0.001)")
