@@ -55,9 +55,8 @@ for i in datas:
         args.dev_path = 'data/fold_' + str(i) + '/dev.tsv'
         args.test_path = 'data/fold_' + str(i) + '/test.tsv'
 
-
         # 多GPU尝试
-        args.batch_size = 8
+        # args.batch_size = 8
         # # 3090专用
         # if prompt == 8:
         #     args.batch_size = 8
@@ -138,7 +137,15 @@ for i in datas:
         loss, metric = models_config.get_loss_metric(args)
 
         # 多GPU训练
-        strategy = tf.distribute.MirroredStrategy()
+        n_gpus = args.gpu_nums
+        device_type = "GPU"
+        devices = tf.config.experimental.list_physical_devices(
+            device_type)
+        devices_names = [d.name.split("e:")[1] for d in devices]
+        strategy = tf.distribute.MirroredStrategy(
+            devices=devices_names[:n_gpus])
+
+        # strategy = tf.distribute.MirroredStrategy()
         with strategy.scope():
             model = creat_model.get_model(args, overal_maxlen, vocab)
             # model.compile(optimizer='rmsprop', loss=loss, metrics=metric)
@@ -190,9 +197,7 @@ for i in datas:
         logger.removeHandler(logging.StreamHandler)
         # 保存该数据集的模型
 
-
     best_result_fold.append(best_result_data)
-
 
 mean_fold.append(np.mean(best_result_fold, axis=0))
 
@@ -201,7 +206,8 @@ import time
 print(np.mean(best_result_fold, axis=0))
 with open("实验数据.txt", "a+", encoding="utf-8") as f:
     f.seek(0)
-    f.write(str(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())) + '：' + args.model_type + '，' + args.explain + '\n')
+    f.write(
+        str(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())) + '：' + args.model_type + '，' + args.explain + '\n')
     f.write(str(best_result_fold))
     f.write("\n")
     f.write('均值：')

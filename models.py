@@ -109,13 +109,10 @@ class Models:
             return model
 
         if args.model_type == 'ChinaAI':
-            '''
-                消融实验
-            '''
             from tensorflow.keras import Model
             from tensorflow.keras.layers import Input, Dense, Embedding, GlobalAveragePooling1D, GlobalMaxPooling1D, \
                 Concatenate, Convolution1D, Dropout, MaxPool1D \
-                , LSTM, LeakyReLU, concatenate, Flatten
+                , LSTM, LeakyReLU, concatenate, Flatten,Bidirectional
             import transformers
 
             from transformers import BertTokenizer, TFBertModel
@@ -135,8 +132,12 @@ class Models:
             # emb_out1.shape == (None,600,300)
             emb_out1 = Embedding(args.vocab_size, args.emb_dim, name='emb')(input1)
 
+            # 添加两层的双向LSTM (return_sequences 返回完整序列还是最后输出)
+            x1 = Bidirectional(LSTM(64, return_sequences=True))(emb_out1)
+            x1 = Bidirectional(LSTM(64, return_sequences=True))(x1)
+
             # trm_out.shape == (None,600,300)
-            x1 = MultiHeadAttention(3, 100)(emb_out1)
+            # x1 = MultiHeadAttention(3, 100)(emb_out1)
 
             # 第二个输入
             # shape == (None,600)
@@ -150,10 +151,12 @@ class Models:
             # x2.shape == (None,600,768)
             x2 = bert_pooler_output
 
-            # out.shape == (None,600,1368)
+            # x_feature.shape == (None,600,1068) == (None,600,300+768) == (None,600,x1+x2)
             x_feature = concatenate([x1, x2], axis=-1)
-            # 把Bert的输出作为初始化门偏置
-            matrix = Dense(1068, activation='sigmoid')(emb_out1)
+            # 把emb_out的输出作为初始化门偏置
+            # matrix.shape == (None,600,1068)
+            matrix = Dense(896, activation='sigmoid')(emb_out1)
+            # x_feature 与 matrix 第三个维度要一样
             out = x_feature * matrix
 
 
