@@ -135,10 +135,10 @@ class Models:
             # 添加两层的双向LSTM (return_sequences 返回完整序列还是最后输出)
             x1 = Bidirectional(LSTM(64, return_sequences=True))(emb_out1)
             x1 = Bidirectional(LSTM(64, return_sequences=True))(x1)
+            x1 = Bidirectional(LSTM(64, return_sequences=True))(x1)
 
             # trm_out.shape == (None,600,300)
             # x1 = MultiHeadAttention(3, 100)(emb_out1)
-
             # 第二个输入
             # shape == (None,600)
             input_ids = Input(shape=(overal_maxlen,), dtype='int32')
