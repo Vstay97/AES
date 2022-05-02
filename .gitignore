@@ -17,3 +17,4 @@ Pre-training/BERT_base
 /data/model_my.model.wv.vectors.npy
 /实验数据.txt
 !/实验数据.txt
+/output_dir/preds
