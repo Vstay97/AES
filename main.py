@@ -13,12 +13,13 @@ from config import Config
 from models import ModelsConfigs, Models
 from Evaluate.evaluator import Evaluator
 
+
 # 查看可用设备
 # from tensorflow.python.client import device_lib
 # print(device_lib.list_local_devices())
 
 os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
-os.environ["CUDA_VISIBLE_DEVICES"] = "0,1"  # 使用第一, 三块GPU
+os.environ["CUDA_VISIBLE_DEVICES"] = "0,1,2,3"  # 使用第一, 三块GPU
 # 最好的验证性能
 best_result_fold = []
 # 平均性能
@@ -68,6 +69,19 @@ for i in datas:
         #     args.batch_size = 16
         # else:
         #     args.batch_size = 8
+
+        # 多GPU训练
+        n_gpus = args.gpu_nums
+        device_type = "GPU"
+        devices = tf.config.experimental.list_physical_devices(
+            device_type)
+        # 设置自动增长
+        for gpu in devices:
+            tf.config.experimental.set_memory_growth(gpu, True)
+        logical_devices = tf.config.list_logical_devices("GPU")
+        devices_names = [d.name.split("e:")[1] for d in devices]
+        strategy = tf.distribute.MirroredStrategy(
+            devices=devices_names[:n_gpus])
 
         # 设定numpy随机种子
         if args.seed > 0:
@@ -136,14 +150,7 @@ for i in datas:
         # optimizer = models_config.get_optimizer(args)
         loss, metric = models_config.get_loss_metric(args)
 
-        # 多GPU训练
-        n_gpus = args.gpu_nums
-        device_type = "GPU"
-        devices = tf.config.experimental.list_physical_devices(
-            device_type)
-        devices_names = [d.name.split("e:")[1] for d in devices]
-        strategy = tf.distribute.MirroredStrategy(
-            devices=devices_names[:n_gpus])
+
 
         # strategy = tf.distribute.MirroredStrategy()
         with strategy.scope():
