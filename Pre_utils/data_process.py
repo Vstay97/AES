@@ -11,6 +11,7 @@ logger = logging.getLogger(__name__)
 num_regex = re.compile('^[+-]?[0-9]+\.?[0-9]*$')
 ref_scores_dtype = 'int32'
 
+
 class DatasetProcess:
     def __init__(self, args):
         self.prompt_id = args.prompt_id
@@ -30,7 +31,7 @@ class DatasetProcess:
             8: (0, 60)
         }
 
-    def convert_to_dataset_friendly_scores(self,scores_array, prompt_id_array):
+    def convert_to_dataset_friendly_scores(self, scores_array, prompt_id_array):
         arg_type = type(prompt_id_array)
         assert arg_type in {int, np.ndarray}
         if arg_type is int:
@@ -47,9 +48,8 @@ class DatasetProcess:
             scores_array = scores_array * (high - low) + low
         return scores_array
 
-
     # 获得分数的范围
-    def get_score_range(self,prompt_id):
+    def get_score_range(self, prompt_id):
         return self.asap_ranges[prompt_id]
 
     # 获得原始数据
@@ -57,7 +57,7 @@ class DatasetProcess:
         return ref_scores_dtype
 
     # 将分数转换为 [0 1] 的边界以进行训练和评估（损失计算）
-    def get_model_friendly_scores(self,scores_array, prompt_id_array):
+    def get_model_friendly_scores(self, scores_array, prompt_id_array):
         arg_type = type(prompt_id_array)
         assert arg_type in {int, np.ndarray}
         if arg_type is int:
@@ -104,7 +104,7 @@ class DatasetProcess:
                 'The vocabualry includes %i words which is different from given: %i' % (len(vocab), vocab_size))
         logger.info('  Vocab size: %i' % (len(vocab)))
 
-        train_x, train_y, train_prompts, train_maxlen = self.read_dataset(train_path, vocab, tokenize_text)
+        train_x, train_y, train_prompts, train_maxlen = self.read_dataset_prompt(train_path, vocab, tokenize_text)
         dev_x, dev_y, dev_prompts, dev_maxlen = self.read_dataset(dev_path, vocab, tokenize_text)
         test_x, test_y, test_prompts, test_maxlen = self.read_dataset(test_path, vocab, tokenize_text)
         overal_maxlen = max(train_maxlen, dev_maxlen, test_maxlen)
@@ -169,6 +169,83 @@ class DatasetProcess:
         logger.info('  <num> hit rate: %.2f%%, <unk> hit rate: %.2f%%' % (100 * num_hit / total, 100 * unk_hit / total))
 
         return data_x, data_y, prompt_ids, maxlen_x
+
+    # 读取训练集数据
+    def read_dataset_prompt(self, file_path, vocab, tokenize_text):
+            print('Reading dataset from: ' + file_path)
+            # 长度截断
+            if self.maxlen > 0:
+                logger.info('  Removing sequences with more than ' + str(self.maxlen) + ' words')
+            data_x, data_y, prompt_ids, contents = [], [], [], []
+            num_hit, unk_hit, total = 0., 0., 0.
+            t = 0
+            maxlen_x = -1
+            with codecs.open(file_path, mode='r', encoding='UTF8') as input_file:
+                next(input_file)
+                for line in input_file:
+                    if line.strip() == '':  # 用于消除空行
+                        continue
+                    tokens = line.strip().split('\t')
+                    essay_id = int(tokens[0])
+                    # kouti = hand_feature[int(tokens[0])]
+                    essay_set = int(tokens[1])  # 文章所属集合/类别
+                    content = tokens[2].strip()
+                    # 第6列是得分
+                    score = float(tokens[6])
+
+                    # 加入辅助
+                    # 归一化
+                    score_one = self.get_model_friendly_scores(score, essay_set)
+                    # 获得辅助词
+                    if (score_one <= 0.2):
+                        aid_word = 'Bad '
+                    elif (score_one <= 0.4):
+                        aid_word = 'Poor '
+                    elif (score_one <= 0.6):
+                        aid_word = 'Fair '
+                    elif (score_one <= 0.8):
+                        aid_word = 'Good '
+                    else:
+                        aid_word = 'Excellent '
+                    # 拼接辅助词
+                    content = aid_word + content
+
+                    if essay_set == self.prompt_id or self.prompt_id <= 0:
+                        content = self.tokenize(content)
+                        # print(content)
+                        if (score > self.asap_ranges[essay_set][0] + 1) and len(content) < 120 \
+                                and content[-1] not in ['.', '!', '?', "''", '``', '..'] \
+                                or (len(content) < 80 and score > self.asap_ranges[essay_set][1] - 1):
+                            print(content[-1], essay_id)
+                            continue
+                        if self.maxlen > 0 and len(content) > self.maxlen:
+                            continue
+                        indices = []
+                        pos_indices = []
+                        t += 1
+                        for word in content:
+                            if self.is_number(word):
+                                indices.append(vocab['<num>'])
+                                num_hit += 1
+                            elif word in vocab:
+                                indices.append(vocab[word])
+                            else:
+                                indices.append(vocab['<unk>'])
+                                unk_hit += 1
+                            total += 1
+                        # 把登录的索引添加到data_x里
+                        data_x.append(indices)
+                        # pos_x.append(pos_indices)
+                        # 把文章的分数添加到data_y里
+                        data_y.append(score)
+                        # 把文章的类别添加到prompt_ids里
+                        prompt_ids.append(essay_set)
+                        if maxlen_x < len(indices):
+                            maxlen_x = len(indices)
+            logger.info(
+                '  <num> hit rate: %.2f%%, <unk> hit rate: %.2f%%' % (100 * num_hit / total, 100 * unk_hit / total))
+
+            return data_x, data_y, prompt_ids, maxlen_x
 
     # 获得第二组数据
     def get_pre_data(self, args):
