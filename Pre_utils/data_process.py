@@ -258,7 +258,7 @@ class DatasetProcess:
 
         print('  Vocab size: %i' % (len(vocab)))
         # 读取数据
-        train_pre_x, train_pre_y, train_pre_prompts, train_maxlen = self.read_pre_data(train_path, vocab)
+        train_pre_x, train_pre_y, train_pre_prompts, train_maxlen = self.read_pre_data_prompt(train_path, vocab)
         dev_pre_x, dev_pre_y, dev_pre_prompts, dev_maxlen = self.read_pre_data(dev_path, vocab)
         test_pre_x, test_pre_y, test_pre_prompts, test_maxlen = self.read_pre_data(test_path, vocab)
         # 没返回
@@ -290,6 +290,85 @@ class DatasetProcess:
                 # data_x.append(content)
                 # 第6列是得分
                 score = float(tokens[6])
+                # data_y.append(score)
+                if essay_set == self.prompt_id or self.prompt_id <= 0:
+                    content = content.lower()
+                    # 分词 不然双引号会不同！
+                    content = self.tokenize(content)
+                    # print(content)
+                    if (score > self.asap_ranges[essay_set][0] + 1) and len(content) < 120 \
+                            and content[-1] not in ['.', '!', '?', "''", '``', '..'] \
+                            or (len(content) < 80 and score > self.asap_ranges[essay_set][1] - 1):
+                        print(content[-1], essay_id)
+                        continue
+                    if self.maxlen > 0 and len(content) > self.maxlen:
+                        continue
+                    indices = []
+                    t += 1
+                    for word in content:
+                        if self.is_number(word):
+                            indices.append(vocab['<num>'])
+                            num_hit += 1
+                        elif word in vocab:
+                            indices.append(vocab[word])
+                        else:
+                            indices.append(vocab['<unk>'])
+                            unk_hit += 1
+                        total += 1
+                    data_x.append(text)
+                    # 把文章的分数添加到data_y里
+                    data_y.append(score)
+                    # 把文章的类别添加到prompt_ids里
+                    prompt_ids.append(essay_set)
+                    if maxlen_x < len(indices):
+                        maxlen_x = len(indices)
+        print('Pre_utils:  <num> hit rate: %.2f%%, <unk> hit rate: %.2f%%' % (
+            100 * num_hit / total, 100 * unk_hit / total))
+
+        return data_x, data_y, prompt_ids, maxlen_x
+
+    # 读取第二组训练数据
+    def read_pre_data_prompt(self, file_path, vocab):
+        print('Reading pretreatment dataset from: ' + file_path)
+        # 长度截断
+        if self.maxlen:
+            print('  Removing sequences with more than ' + str(self.maxlen) + ' words')
+        data_x, data_y, prompt_ids, text = [], [], [], []
+        num_hit, unk_hit, total = 0., 0., 0.
+        t = 0
+        maxlen_x = -1
+        with codecs.open(file_path, mode='r', encoding='UTF8') as input_file:
+            next(input_file)
+            for line in input_file:
+                if line.strip() == '':  # 用于消除空行
+                    continue
+                tokens = line.strip().split('\t')
+                essay_id = int(tokens[0])
+                essay_set = int(tokens[1])  # 文章所属集合/类别
+                content = tokens[2].strip()
+                text = content
+                # # 文本添加进data_x
+                # data_x.append(content)
+                # 第6列是得分
+                score = float(tokens[6])
+
+                # 加入辅助
+                # 归一化
+                score_one = self.get_model_friendly_scores(score, essay_set)
+                # 获得辅助词
+                if (score_one <= 0.2):
+                    aid_word = 'Bad '
+                elif (score_one <= 0.4):
+                    aid_word = 'Poor '
+                elif (score_one <= 0.6):
+                    aid_word = 'Fair '
+                elif (score_one <= 0.8):
+                    aid_word = 'Good '
+                else:
+                    aid_word = 'Excellent '
+                # 拼接辅助词
+                text = aid_word + text
+
                 # data_y.append(score)
                 if essay_set == self.prompt_id or self.prompt_id <= 0:
                     content = content.lower()
