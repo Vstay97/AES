@@ -104,7 +104,7 @@ class DatasetProcess:
                 'The vocabualry includes %i words which is different from given: %i' % (len(vocab), vocab_size))
         logger.info('  Vocab size: %i' % (len(vocab)))
 
-        train_x, train_y, train_prompts, train_maxlen = self.read_dataset_prompt(train_path, vocab, tokenize_text)
+        train_x, train_y, train_prompts, train_maxlen = self.read_dataset(train_path, vocab, tokenize_text)
         dev_x, dev_y, dev_prompts, dev_maxlen = self.read_dataset(dev_path, vocab, tokenize_text)
         test_x, test_y, test_prompts, test_maxlen = self.read_dataset(test_path, vocab, tokenize_text)
         overal_maxlen = max(train_maxlen, dev_maxlen, test_maxlen)
