@@ -160,10 +160,10 @@ class Models:
 
 
             # max = GlobalMaxPooling1D()(out)
-            avg = GlobalAveragePooling1D()(out)
+            # avg = GlobalAveragePooling1D()(out)
             # x = concatenate([max, avg], axis=-1)
 
-            x = avg
+            x = tf.reduce_mean(out,axis=1)
 
             x = Dropout(0.1)(x)
             x = Dense(100, activation='swish')(x)
