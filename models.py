@@ -159,11 +159,11 @@ class Models:
             out = x_feature * matrix
 
 
-            max = GlobalMaxPooling1D()(out)
-            # avg = GlobalAveragePooling1D()(out)
+            # max = GlobalMaxPooling1D()(out)
+            avg = GlobalAveragePooling1D()(out)
             # x = concatenate([max, avg], axis=-1)
 
-            x = max
+            x = avg
 
             x = Dropout(0.1)(x)
             x = Dense(100, activation='swish')(x)
