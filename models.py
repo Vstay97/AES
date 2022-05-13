@@ -152,18 +152,19 @@ class Models:
 
             # x_feature.shape == (None,600,1068) == (None,600,300+768) == (None,600,x1+x2)
             x_feature = concatenate([x1, x2], axis=-1)
-            # 把emb_out的输出作为初始化门偏置
-            # matrix.shape == (None,600,1068)
-            matrix = Dense(896, activation='sigmoid')(emb_out1)
-            # x_feature 与 matrix 第三个维度要一样
-            out = x_feature * matrix
+            # # 把emb_out的输出作为初始化门偏置
+            # # matrix.shape == (None,600,1068)
+            # matrix = Dense(896, activation='sigmoid')(emb_out1)
+            # # x_feature 与 matrix 第三个维度要一样
+            # out = x_feature * matrix
+
+            out = x_feature
 
 
-            # max = GlobalMaxPooling1D()(out)
-            # avg = GlobalAveragePooling1D()(out)
-            # x = concatenate([max, avg], axis=-1)
+            max = GlobalMaxPooling1D()(out)
+            avg = GlobalAveragePooling1D()(out)
+            x = concatenate([max, avg], axis=-1)
 
-            x = tf.reduce_mean(out,axis=1)
 
             x = Dropout(0.1)(x)
             x = Dense(100, activation='swish')(x)
