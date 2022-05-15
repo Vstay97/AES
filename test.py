@@ -1,17 +1,17 @@
-import tensorflow as tf
-print(tf.__version__)
-from tensorflow.keras import *
+ip = {}
 
-gpus = tf.config.experimental.list_physical_devices('GPU')
-if gpus:
-    # 设置两个逻辑GPU模拟多GPU训练
-    try:
-        tf.config.experimental.set_virtual_device_configuration(gpus[0],
-            [tf.config.experimental.VirtualDeviceConfiguration(memory_limit=1024),
-             tf.config.experimental.VirtualDeviceConfiguration(memory_limit=1024)])
-        logical_gpus = tf.config.experimental.list_logical_devices('GPU')
-        print(len(gpus), "Physical GPU,", len(logical_gpus), "Logical GPUs")
-    except RuntimeError as e:
-        print(e)
 
-#输出：1 Physical GPU, 2 Logical GPUs
+for i in f.readlines():
+    ip_attr = i.strip().split()[0]
+    if ip_attr in ip.keys():  # 如果ip存在于字典中，则将该ip的value也就是个数进行增加
+        ip[ip_attr] = ip[ip_attr] + 1
+    else:
+        ip[ip_attr] = 1
+s = sorted(ip.items(), key=lambda x: x[1], reverse=True)
+print(s)
+
+# for  value  in  sorted(ip.values()):
+#     for key in ip.keys():
+#         if ip[key]==value:
+#             print(key,ip[key])
+print(ip)
