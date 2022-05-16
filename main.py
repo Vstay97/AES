@@ -218,3 +218,6 @@ resp = requests.post("https://www.autodl.com/api/v1/wechat/message/push",
                          "content": "平均QWK：" + str(np.mean(mean_fold))
                      })
 print(resp.content.decode())
+
+# 关机
+os.system("shutdown")
