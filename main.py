@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+import requests
 import logging
 import random
 import numpy as np
@@ -208,3 +209,12 @@ with open("实验数据.txt", "a+", encoding="utf-8") as f:
     f.write("平均QWK：" + str(np.mean(mean_fold)))
     f.write("\n")
     f.write("\n")
+
+resp = requests.post("https://www.autodl.com/api/v1/wechat/message/push",
+                     json={
+                         "token": "69b10b3b219c",
+                         "title": "试验完成: " + args.model_type,
+                         "name": "消融实验: " + args.explain,
+                         "content": "平均QWK：" + str(np.mean(mean_fold))
+                     })
+print(resp.content.decode())
