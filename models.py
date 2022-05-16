@@ -119,23 +119,23 @@ class Models:
             path = 'Pre-training/BERT_base'
             bert_model = TFBertModel.from_pretrained(path)
 
-            # # 全部冻结参数
-            # for k, v in bert_model._get_trainable_state().items():
-            #     k.trainable = False
-            # bert_model.summary()
-
-            # 冻结embedding
-            for layer in bert_model.layers[:]:
-                if isinstance(layer, transformers.models.bert.modeling_tf_bert.TFBertMainLayer):
-                    layer.embeddings.trainable = False
-
-            # #冻结encoder部分参数
-            for layer in bert_model.layers[:]:
-                if isinstance(layer, transformers.models.bert.modeling_tf_bert.TFBertMainLayer):
-                    for idx, layer in enumerate(layer.encoder.layer):
-                        if idx in [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]:
-                            layer.trainable = False
+            # 全部冻结参数
+            for k, v in bert_model._get_trainable_state().items():
+                k.trainable = False
             bert_model.summary()
+
+            # # 冻结embedding
+            # for layer in bert_model.layers[:]:
+            #     if isinstance(layer, transformers.models.bert.modeling_tf_bert.TFBertMainLayer):
+            #         layer.embeddings.trainable = False
+
+            # # #冻结encoder部分参数
+            # for layer in bert_model.layers[:]:
+            #     if isinstance(layer, transformers.models.bert.modeling_tf_bert.TFBertMainLayer):
+            #         for idx, layer in enumerate(layer.encoder.layer):
+            #             if idx in [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]:
+            #                 layer.trainable = False
+            # bert_model.summary()
 
             # 第一个输入
             input1 = Input(shape=(overal_maxlen,), dtype='int32')
