@@ -45,8 +45,11 @@ class Config:
         parser.add_argument("--maxlen", dest="maxlen", type=int, metavar='<int>', default=0,
                             help="最大字长，0为无限制 (default=0)")
         parser.add_argument("--seed", dest="seed", type=int, metavar='<int>', default=1234, help="随机种子 (default=1234)")
-        parser.add_argument("-exp", "--explain", dest="explain", type=str, metavar='<str>', default="请输入说明",required=True, help="写入文本说明")
+        parser.add_argument("-exp", "--explain", dest="explain", type=str, metavar='<str>', default="请输入说明",
+                            required=True, help="写入文本说明")
         parser.add_argument("--freeze", dest="freeze", type=int, metavar='<int>', default=11, help="冻结层数(默认为11层)")
+        parser.add_argument("--pool", dest="pool", type=str, metavar='<str>', default='mix',
+                            help="池化方案(mix|max|avg|none)(默认为mix)")
 
         self.args = parser.parse_args()
 

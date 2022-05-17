@@ -168,9 +168,16 @@ class Models:
             # x_feature 与 matrix 第三个维度要一样
             out = x_feature * matrix
 
-            max = GlobalMaxPooling1D()(out)
-            avg = GlobalAveragePooling1D()(out)
-            x = concatenate([max, avg], axis=-1)
+            if args.pool == 'mix':
+                max = GlobalMaxPooling1D()(out)
+                avg = GlobalAveragePooling1D()(out)
+                x = concatenate([max, avg], axis=-1)
+            elif args.pool == 'max':
+                x = GlobalMaxPooling1D()(out)
+            elif args.pool == 'avg':
+                x = GlobalAveragePooling1D()(out)
+            elif args.pool == 'none':
+                x = out
 
             x = Dropout(0.1)(x)
             x = Dense(100, activation='swish')(x)
