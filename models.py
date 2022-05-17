@@ -124,10 +124,10 @@ class Models:
             #     k.trainable = False
             # bert_model.summary()
 
-            # # 冻结embedding
-            # for layer in bert_model.layers[:]:
-            #     if isinstance(layer, transformers.models.bert.modeling_tf_bert.TFBertMainLayer):
-            #         layer.embeddings.trainable = False
+            # 冻结embedding
+            for layer in bert_model.layers[:]:
+                if isinstance(layer, transformers.models.bert.modeling_tf_bert.TFBertMainLayer):
+                    layer.embeddings.trainable = False
 
             # # #冻结encoder部分参数
             # for layer in bert_model.layers[:]:
