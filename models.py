@@ -56,7 +56,7 @@ class Models:
             path = 'Pre-training/BERT_base'
             bert_model = TFBertModel.from_pretrained(path)
 
-            #冻结encoder部分参数
+            # 冻结encoder部分参数
             for layer in bert_model.layers[:]:
                 if isinstance(layer, transformers.models.bert.modeling_tf_bert.TFBertMainLayer):
                     for idx, layer in enumerate(layer.encoder.layer):
@@ -90,7 +90,6 @@ class Models:
             matrix = Dense(1068, activation='sigmoid')(emb_out1)
             out = x_feature * matrix
 
-
             max = GlobalMaxPooling1D()(out)
             avg = GlobalAveragePooling1D()(out)
 
@@ -112,7 +111,7 @@ class Models:
             from tensorflow.keras import Model
             from tensorflow.keras.layers import Input, Dense, Embedding, GlobalAveragePooling1D, GlobalMaxPooling1D, \
                 Concatenate, Convolution1D, Dropout, MaxPool1D \
-                , LSTM, LeakyReLU, concatenate, Flatten,Bidirectional
+                , LSTM, LeakyReLU, concatenate, Flatten, Bidirectional
             import transformers
 
             from transformers import BertTokenizer, TFBertModel
@@ -133,7 +132,7 @@ class Models:
             for layer in bert_model.layers[:]:
                 if isinstance(layer, transformers.models.bert.modeling_tf_bert.TFBertMainLayer):
                     for idx, layer in enumerate(layer.encoder.layer):
-                        if idx in [0, 1, 2, 3, 4]:
+                        if idx in [0, 1, 2, 3, 4, 5, 6, 7]:
                             layer.trainable = False
             bert_model.summary()
 
@@ -168,13 +167,9 @@ class Models:
             # x_feature 与 matrix 第三个维度要一样
             out = x_feature * matrix
 
-
-
-
             max = GlobalMaxPooling1D()(out)
             avg = GlobalAveragePooling1D()(out)
             x = concatenate([max, avg], axis=-1)
-
 
             x = Dropout(0.1)(x)
             x = Dense(100, activation='swish')(x)
@@ -187,7 +182,6 @@ class Models:
             model.summary()
 
             return model
-
 
 
 '''
