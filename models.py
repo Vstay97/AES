@@ -177,7 +177,7 @@ class Models:
             elif args.pool == 'avg':
                 x = GlobalAveragePooling1D()(out)
             elif args.pool == 'none':
-                x = out
+                x = tf.reduce_mean(out, axis=1)
 
             x = Dropout(0.1)(x)
             x = Dense(100, activation='swish')(x)
