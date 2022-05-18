@@ -50,6 +50,8 @@ class Config:
         parser.add_argument("--freeze", dest="freeze", type=int, metavar='<int>', default=11, help="冻结层数(默认为11层)")
         parser.add_argument("--pool", dest="pool", type=str, metavar='<str>', default='mix',
                             help="池化方案(mix|max|avg|none)(默认为mix)")
+        parser.add_argument("--fusion", dest="fusion", type=str, metavar='<str>', default='BiLSTM',
+                            help="池化方案(BiLSTM|PreTraining|Double|None)(默认为BiLSTM)")
 
         self.args = parser.parse_args()
 
