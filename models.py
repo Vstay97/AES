@@ -162,11 +162,12 @@ class Models:
 
             # x_feature.shape == (None,600,1068) == (None,600,300+768) == (None,600,x1+x2)
             x_feature = concatenate([x1, x2], axis=-1)
-            # 把emb_out的输出作为初始化门偏置
-            # matrix.shape == (None,600,1068)
-            matrix = Dense(896, activation='sigmoid')(emb_out1)
-            # x_feature 与 matrix 第三个维度要一样
-            out = x_feature * matrix
+            # # 把emb_out的输出作为初始化门偏置
+            # # matrix.shape == (None,600,1068)
+            # matrix = Dense(896, activation='sigmoid')(emb_out1)
+            # # x_feature 与 matrix 第三个维度要一样
+            # out = x_feature * matrix
+            out = x_feature
 
             if args.pool == 'mix':
                 max = GlobalMaxPooling1D()(out)
