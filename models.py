@@ -139,12 +139,12 @@ class Models:
 
             # 第一个输入
             input1 = Input(shape=(overal_maxlen,), dtype='int32')
-            # emb_out1.shape == (None,600,300)
-            emb_out1 = Embedding(args.vocab_size, args.emb_dim, name='emb')(input1)
-
-            # 添加两层的双向LSTM (return_sequences 返回完整序列还是最后输出)
-            x1 = Bidirectional(LSTM(64, return_sequences=True))(emb_out1)
-            x1 = Bidirectional(LSTM(64, return_sequences=True))(x1)
+            # # emb_out1.shape == (None,600,300)
+            # emb_out1 = Embedding(args.vocab_size, args.emb_dim, name='emb')(input1)
+            #
+            # # 添加两层的双向LSTM (return_sequences 返回完整序列还是最后输出)
+            # x1 = Bidirectional(LSTM(64, return_sequences=True))(emb_out1)
+            # x1 = Bidirectional(LSTM(64, return_sequences=True))(x1)
 
             # trm_out.shape == (None,600,300)
             # x1 = MultiHeadAttention(3, 100)(emb_out1)
@@ -161,13 +161,13 @@ class Models:
             x2 = bert_pooler_output
 
             # x_feature.shape == (None,600,1068) == (None,600,300+768) == (None,600,x1+x2)
-            x_feature = concatenate([x1, x2], axis=-1)
-            # # 把emb_out的输出作为初始化门偏置
-            # # matrix.shape == (None,600,1068)
+            # x_feature = concatenate([x1, x2], axis=-1)
+            # 把emb_out的输出作为初始化门偏置
+            # matrix.shape == (None,600,1068)
             # matrix = Dense(896, activation='sigmoid')(emb_out1)
             # # x_feature 与 matrix 第三个维度要一样
             # out = x_feature * matrix
-            out = x_feature
+            out = x2
 
             if args.pool == 'mix':
                 max = GlobalMaxPooling1D()(out)
