@@ -6,4 +6,4 @@
 # main.py : 运行的py文件名称
 # -tr data/fold_0/train.tsv .... : main.py所用的参数
 # > filelog.txt 2>&1 & : 将控制台的输出写入到 filelog.txt 文件中
-nohup /root/miniconda3/envs/aes/bin/python main.py -tr data/fold_0/train.tsv -tu=data/fold_0/dev.tsv -ts=data/fold_0/test.tsv --emb ./SWEM/glove.6B.300d.txt --vocab-path output_dir/vocab.pkl --tsp data/training_set_rel3.xls --pp data/prompt.xlsx --swp data/stopword.txt -o output_dir -b=4 -p=0 -g=1 -lr=1e-5 -t ChinaAI --epochs=20 --freeze=11 --pool='none' --fusion='BiLSTM' --explain="冻结11+不要池化+双混合标签+batch4" > filelog.txt 2>&1 &
+nohup /root/miniconda3/envs/aes/bin/python main.py -tr data/fold_0/train.tsv -tu=data/fold_0/dev.tsv -ts=data/fold_0/test.tsv --emb ./SWEM/glove.6B.300d.txt --vocab-path output_dir/vocab.pkl --tsp data/training_set_rel3.xls --pp data/prompt.xlsx --swp data/stopword.txt -o output_dir -b=16 -p=0 -g=1 -lr=1e-5 -t ChinaAI --epochs=20 --freeze=11 --pool='avg' --fusion='BiLSTM' --explain="冻结11+平均池化+BiLSTM混合标签+batch16" > filelog.txt 2>&1 &
